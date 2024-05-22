@@ -1,52 +1,53 @@
 import { useState, useCallback } from "react";
 import { Button } from "../src/components/ui/button";
+
 import { useDropzone } from "react-dropzone";
+import { ImageMimeTypes } from "./lib/constants";
+import "./App.css";
+import { FileView } from "./components/FileView";
 
 function App() {
-  const [file, setFile] = useState<ArrayBuffer | null>(null);
-
-  const downloadFile = () => {
-    if (!file) return;
-    const blob = new Blob([file]);
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "myfile.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  // Store the files in state to persist them when new files are added
+  const [files, setFiles] = useState<File[]>([]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    acceptedFiles.forEach((file) => {
-      // Convert file to buffer
-      console.log("loading file reader");
-      const reader = new FileReader();
-      reader.onerror = () => console.log("file reader error");
-      reader.onload = () => {
-        console.log("file loaded");
-        const buffer = reader.result as ArrayBuffer;
-
-        setFile(buffer);
-      };
-      reader.readAsArrayBuffer(file);
-    });
+    setFiles((files) => [...files, ...acceptedFiles]);
   }, []);
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: ImageMimeTypes,
+    onDrop,
+  });
   return (
-    <>
-      <h1 className="">My Convert</h1>
-      <p className="">An Online File Converter asdf</p>
-      <Button onClick={downloadFile}>Convert</Button>
-      <div className="border">
+    <div className="w-full flex flex-col justify-center items-center">
+      <h1 className="text-3xl p-2">Quick Convert</h1>
+      <p className="pb-5">An Online Image Format Converter</p>
+      <div className="flex justify-center items-center w-96 h-64 border-2 border-dashed border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out">
         <div {...getRootProps()}>
           <input {...getInputProps()} />
-          <p>Drag 'n' drop some files here, or click to select files</p>
+          <div className="text-center">
+            <p className="text-gray-500 text-xl">
+              Drag & drop an images here, or click to select files
+            </p>
+            <p className="text-gray-500 text-l">
+              Supported formats: png, jpeg, bmp, ico, tiff, gif, heic
+            </p>
+          </div>
         </div>
-        {file && <p>File loaded</p>}
       </div>
-    </>
+      <div className="space-y-2 justify-center items-center pt-3">
+        {files.length > 0 && (
+          <Button onClick={() => setFiles([])}>Discard All</Button>
+        )}
+        {files.map((file) => (
+          <FileView
+            key={file.name}
+            file={file}
+            onDiscard={() => setFiles(files.filter((f) => f !== file))}
+          />
+        ))}
+      </div>
+    </div>
   );
 }
 
