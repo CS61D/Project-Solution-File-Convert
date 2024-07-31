@@ -22,7 +22,7 @@ function App() {
     <div className="w-full flex flex-col justify-center items-center">
       <h1 className="text-3xl p-2">Quick Convert</h1>
       <p className="pb-5">An Online Image Format Converter</p>
-      <div className="flex justify-center items-center w-96 h-64 border-2 border-dashed border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out">
+      <div className="flex justify-center items-center w-96 h-64 border-2 border-dashed border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out p-2">
         <div {...getRootProps()}>
           <input {...getInputProps()} />
           <div className="text-center">
