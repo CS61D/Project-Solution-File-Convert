@@ -43,6 +43,7 @@ function App() {
           <FileView
             key={file.name}
             file={file}
+            // Todo revoke object url
             onDiscard={() => setFiles(files.filter((f) => f !== file))}
           />
         ))}
